@@ -84,7 +84,10 @@ export function HomeScreen({ onProductPress, onCategoryPress }: HomeScreenProps)
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <Text style={styles.sectionTitle}>Tratamento</Text>
-                        <TouchableOpacity style={styles.viewAllButton}>
+                        <TouchableOpacity
+                            style={styles.viewAllButton}
+                            onPress={() => onCategoryPress?.('tratamento', 'Tratamento')}
+                        >
                             <Text style={styles.viewAllText}>Ver todos</Text>
                             <ChevronRight size={16} color="#6B7280" />
                         </TouchableOpacity>

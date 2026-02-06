@@ -9,11 +9,12 @@ import { BrandsScreen } from './src/screens/BrandsScreen';
 import { SearchScreen } from './src/screens/SearchScreen';
 import { ProductListScreen } from './src/screens/ProductListScreen';
 import { ProductDetailScreen } from './src/screens/ProductDetailScreen';
+import { CronogramaCapilarScreen } from './src/screens/CronogramaCapilarScreen';
 import { BottomNavigation } from './src/components/BottomNavigation';
 import { DrawerMenu } from './src/components/DrawerMenu';
 
 type TabName = 'inicio' | 'categorias' | 'buscar' | 'marcas' | 'mais';
-type ScreenName = 'home' | 'categories' | 'brands' | 'search' | 'productList' | 'productDetail';
+type ScreenName = 'home' | 'categories' | 'brands' | 'search' | 'productList' | 'productDetail' | 'cronograma';
 
 interface ScreenParams {
   type?: string;
@@ -99,8 +100,7 @@ export default function App() {
       setScreenParams(params);
       setCurrentScreen('productList');
     } else if (screen === 'cronograma') {
-      // TODO: Implement cronograma screen
-      console.log('Navigate to cronograma');
+      setCurrentScreen('cronograma');
     }
   };
 
@@ -163,6 +163,12 @@ export default function App() {
           <ProductDetailScreen
             productId={screenParams.productId}
             onBack={handleBackFromDetail}
+          />
+        );
+      case 'cronograma':
+        return (
+          <CronogramaCapilarScreen
+            onBack={navigateToHome}
           />
         );
       default:

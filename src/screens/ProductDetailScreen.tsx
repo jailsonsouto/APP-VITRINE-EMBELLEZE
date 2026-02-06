@@ -6,7 +6,8 @@ import {
     TouchableOpacity,
     Image,
     StyleSheet,
-    Dimensions
+    Dimensions,
+    ActivityIndicator
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -19,6 +20,7 @@ import {
     ChevronDown,
     ChevronUp
 } from 'lucide-react-native';
+import { api, Product } from '../services/api';
 
 const { width } = Dimensions.get('window');
 
@@ -52,40 +54,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, content, expanded,
     </View>
 );
 
-// Sample product data - in real app this would come from API
-const sampleProduct = {
-    id: 'gelato-pistache',
-    brand: 'Novex',
-    name: 'Creme de Tratamento Novex Gelato de Pistache',
-    sku: 'EMB0001',
-    rating: 5,
-    reviews: 11,
-    originalPrice: 40.00,
-    salePrice: 24.90,
-    discount: 38,
-    sizes: [
-        { label: '1KG', price: 24.90 },
-        { label: '400G', price: 12.45 }
-    ],
-    images: [
-        'https://embelleze.com/cdn/shop/files/CREME_DE_TRATAMENTO_GELATO_DE_PISTACHE_1KG.png?v=1730140188&width=800',
-        'https://embelleze.com/cdn/shop/files/CREME_DE_TRATAMENTO_GELATO_DE_PISTACHE_1KG_2.png?v=1730140188&width=400'
-    ],
-    sections: {
-        description: 'O Creme de Tratamento Novex Gelato de Pistache é um tratamento ultraprofundo que combina a tecnologia Bomba Lamelar 8 em 1 com ativos poderosos para transformar seus cabelos. Indicado para todos os tipos de cabelo que buscam hidratação intensa, nutrição e brilho espelhado.',
-        indication: 'Indicado para todos os tipos de cabelo que precisam de hidratação profunda, nutrição e reconstrução. Ideal para cabelos ressecados, danificados, com frizz ou sem brilho.',
-        composition: 'Aqua, Cetearyl Alcohol, Behentrimonium Chloride, Cetyl Alcohol, Stearamidopropyl Dimethylamine, Parfum, Isopropyl Myristate, Propylene Glycol, Glycerin, Hydrolyzed Keratin, Pistacia Vera Seed Oil, Prunus Amygdalus Dulcis Oil, Tocopheryl Acetate...',
-        benefits: '• Hidratação profunda e duradoura\n• Nutrição intensiva dos fios\n• Reconstrução da fibra capilar\n• Brilho espelhado\n• Maciez extrema\n• Redução do frizz\n• Proteção contra danos externos\n• Efeito Bomba Lamelar 8 em 1',
-        action: 'A tecnologia Bomba Lamelar penetra nas camadas mais profundas do fio, reconstruindo a estrutura capilar de dentro para fora. Os ativos naturais do pistache e amêndoas nutrem e hidratam intensamente.',
-        actives: '• Óleo de Pistache: rico em vitaminas E e B, nutre e fortalece\n• Óleo de Amêndoas: hidrata e suaviza os fios\n• Queratina Hidrolisada: reconstrói a fibra capilar\n• Complexo de Vitaminas: protege e revitaliza',
-        results: 'Cabelos macios, sedosos e com brilho espelhado logo na primeira aplicação. Fios mais fortes, saudáveis e protegidos contra danos do dia a dia.',
-        howToUse: '1. Após lavar os cabelos com shampoo Novex, retire o excesso de água\n2. Aplique o creme de tratamento mecha por mecha\n3. Deixe agir por 3 a 5 minutos (ou mais para tratamento intensivo)\n4. Enxágue bem\n5. Finalize como preferir'
-    },
-    relatedProducts: [
-        { id: 'gelato-cereja', name: 'Gelato de Cereja', price: 24.90, image: 'https://embelleze.com/cdn/shop/products/gelato-cereja.png' },
-        { id: 'gelato-morango', name: 'Gelato de Morango', price: 24.90, image: 'https://embelleze.com/cdn/shop/products/gelato-morango.png' }
-    ]
-};
+
 
 export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ productId, onBack }) => {
     const [isFavorite, setIsFavorite] = useState(false);
@@ -93,7 +62,65 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ produc
     const [quantity, setQuantity] = useState(1);
     const [expandedSection, setExpandedSection] = useState<string | null>('description');
 
-    const product = sampleProduct; // In real app: fetch by productId
+    const [product, setProduct] = useState<Product | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    React.useEffect(() => {
+        const loadProduct = async () => {
+            setLoading(true);
+            try {
+                if (productId) {
+                    const data = await api.getProductById(productId);
+                    setProduct(data || null);
+                }
+            } catch (error) {
+                console.error('Failed to load product', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadProduct();
+    }, [productId]);
+
+    if (loading) {
+        return (
+            <SafeAreaView style={[styles.container, styles.centerContent]} edges={['top']}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={onBack} style={styles.headerButton}>
+                        <ChevronLeft size={24} color="#111827" />
+                    </TouchableOpacity>
+                </View>
+                <ActivityIndicator size="large" color="#7C3AED" />
+            </SafeAreaView>
+        );
+    }
+
+    if (!product) {
+        return (
+            <SafeAreaView style={styles.container} edges={['top']}>
+                <View style={[styles.header, styles.centerContent]}>
+                    <TouchableOpacity onPress={onBack} style={styles.headerButton}>
+                        <ChevronLeft size={24} color="#111827" />
+                    </TouchableOpacity>
+                    <Text>Produto não encontrado</Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
+    const discount = product.discount || 0;
+    const currentPrice = product.sizes ? product.sizes[selectedSize]?.price : (product.salePrice || product.price);
+    const sections = product.sections || {
+        description: product.description || 'Sem descrição.',
+        indication: 'Consulte a embalagem.',
+        composition: 'Consulte a embalagem.',
+        benefits: 'Consulte a embalagem.',
+        action: 'Consulte a embalagem.',
+        actives: 'Consulte a embalagem.',
+        results: 'Consulte a embalagem.',
+        howToUse: 'Consulte a embalagem.'
+    };
+    const images = product.images && product.images.length > 0 ? product.images : [product.image];
 
     const toggleSection = (section: string) => {
         setExpandedSection(expandedSection === section ? null : section);
@@ -132,16 +159,16 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ produc
 
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
                 {/* Discount Badge */}
-                {product.discount > 0 && (
+                {discount > 0 && (
                     <View style={styles.discountBadge}>
-                        <Text style={styles.discountText}>-{product.discount}%</Text>
+                        <Text style={styles.discountText}>-{discount}%</Text>
                     </View>
                 )}
 
                 {/* Product Image */}
                 <View style={styles.imageContainer}>
                     <Image
-                        source={{ uri: product.images[0] }}
+                        source={{ uri: images[0] }}
                         style={styles.productImage}
                         resizeMode="contain"
                     />
@@ -154,7 +181,7 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ produc
                     style={styles.thumbnailStrip}
                     contentContainerStyle={styles.thumbnailContent}
                 >
-                    {product.images.map((img, index) => (
+                    {images.map((img, index) => (
                         <TouchableOpacity key={index} style={styles.thumbnail}>
                             <Image
                                 source={{ uri: img }}
@@ -192,36 +219,40 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ produc
                     <Text style={styles.sku}>SKU: {product.sku}</Text>
 
                     {/* Size Selector */}
-                    <Text style={styles.sizeLabel}>Tamanho:</Text>
-                    <View style={styles.sizeSelector}>
-                        {product.sizes.map((size, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={[
-                                    styles.sizeButton,
-                                    selectedSize === index && styles.sizeButtonActive
-                                ]}
-                                onPress={() => setSelectedSize(index)}
-                            >
-                                <Text style={[
-                                    styles.sizeButtonText,
-                                    selectedSize === index && styles.sizeButtonTextActive
-                                ]}>
-                                    {size.label}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
+                    {product.sizes && (
+                        <>
+                            <Text style={styles.sizeLabel}>Tamanho:</Text>
+                            <View style={styles.sizeSelector}>
+                                {product.sizes.map((size, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={[
+                                            styles.sizeButton,
+                                            selectedSize === index && styles.sizeButtonActive
+                                        ]}
+                                        onPress={() => setSelectedSize(index)}
+                                    >
+                                        <Text style={[
+                                            styles.sizeButtonText,
+                                            selectedSize === index && styles.sizeButtonTextActive
+                                        ]}>
+                                            {size.label}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </>
+                    )}
 
                     {/* Price */}
                     <View style={styles.priceContainer}>
-                        {product.originalPrice > product.salePrice && (
+                        {(product.originalPrice || 0) > currentPrice && (
                             <Text style={styles.originalPrice}>
-                                R$ {product.originalPrice.toFixed(2).replace('.', ',')}
+                                R$ {(product.originalPrice || 0).toFixed(2).replace('.', ',')}
                             </Text>
                         )}
                         <Text style={styles.salePrice}>
-                            R$ {product.sizes[selectedSize].price.toFixed(2).replace('.', ',')}
+                            R$ {currentPrice.toFixed(2).replace('.', ',')}
                         </Text>
                     </View>
 
@@ -255,49 +286,49 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ produc
                 <View style={styles.accordionContainer}>
                     <AccordionItem
                         title="Descrição"
-                        content={product.sections.description}
+                        content={sections.description}
                         expanded={expandedSection === 'description'}
                         onToggle={() => toggleSection('description')}
                     />
                     <AccordionItem
                         title="Indicação"
-                        content={product.sections.indication}
+                        content={sections.indication}
                         expanded={expandedSection === 'indication'}
                         onToggle={() => toggleSection('indication')}
                     />
                     <AccordionItem
                         title="Composição"
-                        content={product.sections.composition}
+                        content={sections.composition}
                         expanded={expandedSection === 'composition'}
                         onToggle={() => toggleSection('composition')}
                     />
                     <AccordionItem
                         title="Benefícios"
-                        content={product.sections.benefits}
+                        content={sections.benefits}
                         expanded={expandedSection === 'benefits'}
                         onToggle={() => toggleSection('benefits')}
                     />
                     <AccordionItem
                         title="Ação"
-                        content={product.sections.action}
+                        content={sections.action}
                         expanded={expandedSection === 'action'}
                         onToggle={() => toggleSection('action')}
                     />
                     <AccordionItem
                         title="Ativos"
-                        content={product.sections.actives}
+                        content={sections.actives}
                         expanded={expandedSection === 'actives'}
                         onToggle={() => toggleSection('actives')}
                     />
                     <AccordionItem
                         title="Resultados"
-                        content={product.sections.results}
+                        content={sections.results}
                         expanded={expandedSection === 'results'}
                         onToggle={() => toggleSection('results')}
                     />
                     <AccordionItem
                         title="Modo de Uso"
-                        content={product.sections.howToUse}
+                        content={sections.howToUse}
                         expanded={expandedSection === 'howToUse'}
                         onToggle={() => toggleSection('howToUse')}
                     />
@@ -525,5 +556,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#4B5563',
         lineHeight: 22
+    },
+    centerContent: {
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 });

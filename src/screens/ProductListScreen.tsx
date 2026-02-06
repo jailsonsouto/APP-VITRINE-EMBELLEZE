@@ -6,10 +6,12 @@ import {
     TouchableOpacity,
     Image,
     StyleSheet,
-    Dimensions
+    Dimensions,
+    ActivityIndicator
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft, Heart, ShoppingBag } from 'lucide-react-native';
+import { api, Product } from '../services/api';
 
 const { width } = Dimensions.get('window');
 const cardWidth = (width - 48) / 2;
@@ -19,115 +21,28 @@ interface ProductListScreenProps {
         type?: string;
         slug?: string;
         name?: string;
+        productId?: string;
     };
     onBack: () => void;
     onProductPress: (productId: string) => void;
 }
 
-// Real products from different Embelleze brands
-const sampleProducts = [
-    {
-        id: 'novex-colageno',
-        brand: 'Novex',
-        name: 'Mini Creme de Tratamento Infusão Colágeno',
-        originalPrice: 11.00,
-        salePrice: 8.90,
-        discount: 19,
-        rating: 5,
-        reviews: 24,
-        image: 'https://embelleze.com/cdn/shop/files/Novex-Mini-Creme-de-Tratamento-Infusao-Colageno-210g.png?v=1690466453&width=533'
-    },
-    {
-        id: 'natucor-louro',
-        brand: 'Natucor',
-        name: 'Tinta Extrovertida Louro Natural 7.0',
-        originalPrice: 16.00,
-        salePrice: 13.90,
-        discount: 13,
-        rating: 4,
-        reviews: 18,
-        image: 'https://embelleze.com/cdn/shop/files/natucor-extrovertida-7.0-louro-natural.png?v=1690466453&width=533'
-    },
-    {
-        id: 'maxton-preto',
-        brand: 'Maxton',
-        name: 'Tinta Você Mais Surpreendente Preto Carvão 1.01',
-        originalPrice: 17.00,
-        salePrice: 14.90,
-        discount: 12,
-        rating: 5,
-        reviews: 32,
-        image: 'https://embelleze.com/cdn/shop/files/maxton-preto-carvao-1.01.png?v=1690466453&width=533'
-    },
-    {
-        id: 'pelucia-hene',
-        brand: 'Pelúcia',
-        name: 'Henê Pelúcia Médio Pouch',
-        originalPrice: 17.00,
-        salePrice: 12.90,
-        discount: 24,
-        rating: 4,
-        reviews: 15,
-        image: 'https://embelleze.com/cdn/shop/files/hene-pelucia-medio-pouch.png?v=1690466453&width=533'
-    },
-    {
-        id: 'hairlife-alisante',
-        brand: 'HairLife',
-        name: 'Creme Alisante Liso & Natural',
-        originalPrice: 20.00,
-        salePrice: 16.90,
-        discount: 16,
-        rating: 5,
-        reviews: 41,
-        image: 'https://embelleze.com/cdn/shop/files/hairlife-liso-natural.png?v=1690466453&width=533'
-    },
-    {
-        id: 'amacihair-hialuronico',
-        brand: 'AmaciHair',
-        name: 'Creme Alisante e Relaxante Mix Hialurônico',
-        originalPrice: 37.00,
-        salePrice: 31.90,
-        discount: 14,
-        rating: 5,
-        reviews: 28,
-        image: 'https://embelleze.com/cdn/shop/files/amacihair-mix-hialuronico.png?v=1690466453&width=533'
-    },
-    {
-        id: 'gelato-pistache',
-        brand: 'Novex',
-        name: 'Creme de Tratamento Gelato de Pistache 1kg',
-        originalPrice: 40.00,
-        salePrice: 24.90,
-        discount: 38,
-        rating: 5,
-        reviews: 11,
-        image: 'https://embelleze.com/cdn/shop/files/CREME_DE_TRATAMENTO_GELATO_DE_PISTACHE_1KG.png?v=1730140188&width=400'
-    },
-    {
-        id: 'super-babosao',
-        brand: 'Novex',
-        name: 'Hidra Creme de Tratamento Super Babosão',
-        originalPrice: 35.00,
-        salePrice: 21.90,
-        discount: 37,
-        rating: 5,
-        reviews: 25,
-        image: 'https://embelleze.com/cdn/shop/files/SUPER_BABOSAO_TRATAMENTO_1KG.png?v=1730140188&width=400'
-    }
-];
+
 
 interface ProductCardListProps {
-    product: typeof sampleProducts[0];
+    product: Product;
     onPress: () => void;
 }
 
 const ProductCardList: React.FC<ProductCardListProps> = ({ product, onPress }) => {
     const [isFavorite, setIsFavorite] = useState(false);
 
+    const discount = product.discount || 0;
+
     return (
         <TouchableOpacity style={styles.productCard} onPress={onPress}>
             {/* Discount Badge */}
-            {product.discount > 0 && (
+            {discount > 0 && (
                 <View style={styles.discountBadge}>
                     <Text style={styles.discountText}>-{product.discount}%</Text>
                 </View>
@@ -167,13 +82,13 @@ const ProductCardList: React.FC<ProductCardListProps> = ({ product, onPress }) =
 
                 {/* Price */}
                 <View style={styles.priceContainer}>
-                    {product.originalPrice > product.salePrice && (
+                    {(product.originalPrice || 0) > (product.salePrice || product.price) && (
                         <Text style={styles.originalPrice}>
-                            R$ {product.originalPrice.toFixed(2).replace('.', ',')}
+                            R$ {(product.originalPrice || 0).toFixed(2).replace('.', ',')}
                         </Text>
                     )}
                     <Text style={styles.salePrice}>
-                        R$ {product.salePrice.toFixed(2).replace('.', ',')}
+                        R$ {(product.salePrice || product.price).toFixed(2).replace('.', ',')}
                     </Text>
                 </View>
 
@@ -194,6 +109,49 @@ export const ProductListScreen: React.FC<ProductListScreenProps> = ({
 }) => {
     const title = params?.name || 'Produtos';
 
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    React.useEffect(() => {
+        const loadProducts = async () => {
+            setLoading(true);
+            try {
+                if (params?.type === 'categoria' && params.slug) {
+                    const data = await api.getProductsByCategory(params.slug);
+                    setProducts(data);
+                } else if (params?.type === 'marca' && params.slug) {
+                    const data = await api.getProductsByBrand(params.slug);
+                    setProducts(data);
+                } else {
+                    const data = await api.getProducts();
+                    setProducts(data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch products', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadProducts();
+    }, [params]);
+
+    // Loading State
+    if (loading) {
+        return (
+            <SafeAreaView style={[styles.container, styles.centerContent]} edges={['top']}>
+                <View style={[styles.header, { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }]}>
+                    <TouchableOpacity onPress={onBack} style={styles.backButton}>
+                        <ChevronLeft size={24} color="#111827" />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>{title}</Text>
+                    <View style={styles.headerSpacer} />
+                </View>
+                <ActivityIndicator size="large" color="#7C3AED" />
+            </SafeAreaView>
+        );
+    }
+
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
             {/* Header */}
@@ -207,7 +165,7 @@ export const ProductListScreen: React.FC<ProductListScreenProps> = ({
 
             {/* Results Count */}
             <View style={styles.resultsBar}>
-                <Text style={styles.resultsText}>{sampleProducts.length} produtos encontrados</Text>
+                <Text style={styles.resultsText}>{products.length} produtos encontrados</Text>
             </View>
 
             {/* Product Grid */}
@@ -216,7 +174,7 @@ export const ProductListScreen: React.FC<ProductListScreenProps> = ({
                 contentContainerStyle={styles.productGrid}
                 showsVerticalScrollIndicator={false}
             >
-                {sampleProducts.map((product) => (
+                {products.map((product) => (
                     <ProductCardList
                         key={product.id}
                         product={product}
@@ -380,5 +338,9 @@ const styles = StyleSheet.create({
         fontSize: 13,
         fontWeight: '600',
         marginLeft: 6
+    },
+    centerContent: {
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 });
