@@ -1,35 +1,12 @@
 import React, { useState } from 'react';
-import {
-    View,
-    Text,
-    TextInput,
-    ScrollView,
-    TouchableOpacity,
-    StyleSheet,
-    SafeAreaView,
-    Keyboard
-} from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet, Keyboard } from 'react-native';
 import { ChevronLeft, Search, X, Clock, TrendingUp } from 'lucide-react-native';
-import { ProductCard } from '../src/components/ProductCard';
+import { ProductCard } from '../components/ProductCard';
 
-const productImage = require('../src/assets/images/products/shampoo_premium.png');
+const productImage = require('../assets/images/products/shampoo_premium.png');
 
-const recentSearches = [
-    'Shampoo hidratante',
-    'Novex colágeno',
-    'Máscara capilar',
-    'Tintura castanho',
-];
-
-const trendingSearches = [
-    'Super Babosão',
-    'Santo Black',
-    'Gelato de Pistache',
-    'Infusão Colágeno',
-    'Doctor Rícino',
-    'Maxton loiro',
-];
+const recentSearches = ['Shampoo hidratante', 'Novex colágeno', 'Máscara capilar', 'Tintura castanho'];
+const trendingSearches = ['Super Babosão', 'Santo Black', 'Gelato de Pistache', 'Infusão Colágeno', 'Doctor Rícino', 'Maxton loiro'];
 
 const mockResults = [
     { id: '1', brand: 'Novex', name: 'Shampoo Hidratante Premium', sku: 'NOV001', image: productImage, isPromo: false },
@@ -38,8 +15,12 @@ const mockResults = [
     { id: '4', brand: 'Natucor', name: 'Tintura Óleos Amazônicos', sku: 'NAT001', image: productImage, isPromo: false },
 ];
 
-export default function SearchScreen() {
-    const router = useRouter();
+interface SearchScreenProps {
+    onBack: () => void;
+    onProductPress: (productId: string) => void;
+}
+
+export function SearchScreen({ onBack, onProductPress }: SearchScreenProps) {
     const [query, setQuery] = useState('');
     const [hasSearched, setHasSearched] = useState(false);
 
@@ -62,10 +43,10 @@ export default function SearchScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             {/* Header */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                <TouchableOpacity onPress={onBack} style={styles.backButton}>
                     <ChevronLeft size={24} color="#111827" />
                 </TouchableOpacity>
 
@@ -96,11 +77,7 @@ export default function SearchScreen() {
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Buscas Recentes</Text>
                             {recentSearches.map((term, index) => (
-                                <TouchableOpacity
-                                    key={index}
-                                    style={styles.searchItem}
-                                    onPress={() => handleQuickSearch(term)}
-                                >
+                                <TouchableOpacity key={index} style={styles.searchItem} onPress={() => handleQuickSearch(term)}>
                                     <Clock size={16} color="#9CA3AF" />
                                     <Text style={styles.searchItemText}>{term}</Text>
                                 </TouchableOpacity>
@@ -112,11 +89,7 @@ export default function SearchScreen() {
                             <Text style={styles.sectionTitle}>Em Alta</Text>
                             <View style={styles.tagsContainer}>
                                 {trendingSearches.map((term, index) => (
-                                    <TouchableOpacity
-                                        key={index}
-                                        style={styles.tag}
-                                        onPress={() => handleQuickSearch(term)}
-                                    >
+                                    <TouchableOpacity key={index} style={styles.tag} onPress={() => handleQuickSearch(term)}>
                                         <TrendingUp size={12} color="#8B5CF6" />
                                         <Text style={styles.tagText}>{term}</Text>
                                     </TouchableOpacity>
@@ -128,9 +101,7 @@ export default function SearchScreen() {
                     <>
                         {/* Search Results */}
                         <View style={styles.resultsHeader}>
-                            <Text style={styles.resultsText}>
-                                {mockResults.length} resultados para "{query}"
-                            </Text>
+                            <Text style={styles.resultsText}>{mockResults.length} resultados para "{query}"</Text>
                         </View>
 
                         <View style={styles.productGrid}>
@@ -142,7 +113,7 @@ export default function SearchScreen() {
                                         sku={product.sku}
                                         imageSource={product.image}
                                         isPromo={product.isPromo}
-                                        onPress={() => router.push(`/product/${product.id}`)}
+                                        onPress={() => onProductPress(product.id)}
                                     />
                                 </View>
                             ))}
@@ -152,7 +123,7 @@ export default function SearchScreen() {
 
                 <View style={styles.bottomSpacer} />
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -217,7 +188,6 @@ const styles = StyleSheet.create({
     tagsContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 8,
     },
     tag: {
         flexDirection: 'row',
@@ -226,12 +196,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 8,
         borderRadius: 20,
-        gap: 4,
+        marginRight: 8,
+        marginBottom: 8,
     },
     tagText: {
         fontSize: 13,
         color: '#8B5CF6',
         fontWeight: '500',
+        marginLeft: 4,
     },
     resultsHeader: {
         paddingHorizontal: 16,
@@ -252,6 +224,6 @@ const styles = StyleSheet.create({
         width: '50%',
     },
     bottomSpacer: {
-        height: 40,
+        height: 100,
     },
 });

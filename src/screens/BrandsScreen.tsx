@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, SafeAreaView } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { ChevronLeft } from 'lucide-react-native';
 
 const brands = [
@@ -14,14 +13,17 @@ const brands = [
     { id: 'botohair', name: 'BotoHair', products: 15, color: '#14B8A6' },
 ];
 
-export default function MarcasScreen() {
-    const router = useRouter();
+interface BrandsScreenProps {
+    onBack: () => void;
+    onBrandPress: (brandId: string) => void;
+}
 
+export function BrandsScreen({ onBack, onBrandPress }: BrandsScreenProps) {
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             {/* Header */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                <TouchableOpacity onPress={onBack} style={styles.backButton}>
                     <ChevronLeft size={24} color="#111827" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Marcas</Text>
@@ -34,7 +36,7 @@ export default function MarcasScreen() {
                         <TouchableOpacity
                             key={brand.id}
                             style={styles.brandCard}
-                            onPress={() => router.push(`/category/marca-${brand.id}`)}
+                            onPress={() => onBrandPress(brand.id)}
                         >
                             <View style={[styles.brandLogo, { backgroundColor: brand.color }]}>
                                 <Text style={styles.brandInitial}>{brand.name[0]}</Text>
@@ -46,7 +48,7 @@ export default function MarcasScreen() {
                 </View>
                 <View style={styles.bottomSpacer} />
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -117,6 +119,6 @@ const styles = StyleSheet.create({
         color: '#6B7280',
     },
     bottomSpacer: {
-        height: 80,
+        height: 100,
     },
 });

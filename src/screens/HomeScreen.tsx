@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
 import { Header } from '../components/Header';
 import { HeroBanner } from '../components/HeroBanner';
 import { CategoryCard } from '../components/CategoryCard';
@@ -23,13 +22,6 @@ const mockProducts = [
     { id: '4', brand: 'Embelleze', name: 'Óleo Reparador de Pontas', sku: 'EMB004', image: productImage, isPromo: false },
 ];
 
-const categories = [
-    { id: 'tratamento', title: 'Tratamento', image: categoryTratamento },
-    { id: 'coloracao', title: 'Tintura', image: categoryTintura },
-    { id: 'transformacao', title: 'Transformação', image: categoryTransformacao },
-    { id: 'perfumes', title: 'Perfumaria', image: categoryPerfumaria },
-];
-
 const faqQuestions = [
     'Como aplicar os produtos de tratamento?',
     'Qual a durabilidade das tinturas?',
@@ -37,66 +29,37 @@ const faqQuestions = [
     'Produtos são testados dermatologicamente?',
 ];
 
-export function HomeScreen() {
-    const router = useRouter();
+interface HomeScreenProps {
+    onProductPress?: (productId: string) => void;
+}
 
-    const handleCategoryPress = (categoryId: string) => {
-        router.push(`/category/${categoryId}`);
-    };
-
-    const handleProductPress = (productId: string) => {
-        router.push(`/product/${productId}`);
-    };
-
-    const handleViewAllPress = () => {
-        router.push('/category/tratamento');
-    };
-
+export function HomeScreen({ onProductPress }: HomeScreenProps) {
     return (
         <View style={styles.container}>
             <Header />
 
             <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
                 {/* Hero Banner */}
-                <TouchableOpacity
-                    style={styles.bannerSection}
-                    onPress={() => router.push('/category/novidades')}
-                >
+                <View style={styles.bannerSection}>
                     <HeroBanner
                         imageSource={bannerImage}
                         title="Nova Linha de Tratamentos"
                         subtitle="Descubra os lançamentos da temporada"
                     />
-                </TouchableOpacity>
+                </View>
 
                 {/* Categories Section */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Categorias</Text>
 
                     <View style={styles.categoryRow}>
-                        <CategoryCard
-                            title={categories[0].title}
-                            imageSource={categories[0].image}
-                            onPress={() => handleCategoryPress(categories[0].id)}
-                        />
-                        <CategoryCard
-                            title={categories[1].title}
-                            imageSource={categories[1].image}
-                            onPress={() => handleCategoryPress(categories[1].id)}
-                        />
+                        <CategoryCard title="Tratamento" imageSource={categoryTratamento} />
+                        <CategoryCard title="Tintura" imageSource={categoryTintura} />
                     </View>
 
                     <View style={styles.categoryRow}>
-                        <CategoryCard
-                            title={categories[2].title}
-                            imageSource={categories[2].image}
-                            onPress={() => handleCategoryPress(categories[2].id)}
-                        />
-                        <CategoryCard
-                            title={categories[3].title}
-                            imageSource={categories[3].image}
-                            onPress={() => handleCategoryPress(categories[3].id)}
-                        />
+                        <CategoryCard title="Transformação" imageSource={categoryTransformacao} />
+                        <CategoryCard title="Perfumaria" imageSource={categoryPerfumaria} />
                     </View>
                 </View>
 
@@ -104,7 +67,7 @@ export function HomeScreen() {
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <Text style={styles.sectionTitle}>Tratamento</Text>
-                        <TouchableOpacity style={styles.viewAllButton} onPress={handleViewAllPress}>
+                        <TouchableOpacity style={styles.viewAllButton}>
                             <Text style={styles.viewAllText}>Ver todos</Text>
                             <ChevronRight size={16} color="#6B7280" />
                         </TouchableOpacity>
@@ -119,7 +82,7 @@ export function HomeScreen() {
                                     sku={product.sku}
                                     imageSource={product.image}
                                     isPromo={product.isPromo}
-                                    onPress={() => handleProductPress(product.id)}
+                                    onPress={() => onProductPress?.(product.id)}
                                 />
                             </View>
                         ))}

@@ -1,68 +1,32 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, SafeAreaView } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { ChevronLeft } from 'lucide-react-native';
 
+const categoryTratamento = require('../assets/images/categories/tratamento.png');
+const categoryTintura = require('../assets/images/categories/tintura.png');
+const categoryTransformacao = require('../assets/images/categories/transformacao.png');
+const categoryPerfumaria = require('../assets/images/categories/perfumaria.png');
+
 const categories = [
-    {
-        id: 'cabelos',
-        title: 'Cabelos',
-        subtitle: 'Shampoos • Condicionadores • Máscaras',
-        image: require('../../src/assets/images/categories/tratamento.png'),
-        color: '#F9FAFB',
-    },
-    {
-        id: 'perfumes',
-        title: 'Perfumes e Perfumaria',
-        subtitle: 'Perfumes • Desodorantes • Águas',
-        image: require('../../src/assets/images/categories/perfumaria.png'),
-        color: '#EBE5F9',
-    },
-    {
-        id: 'maquiagem',
-        title: 'Maquiagem',
-        subtitle: 'Base • Batom • Sombras',
-        image: require('../../src/assets/images/categories/transformacao.png'),
-        color: '#EBF5FF',
-    },
-    {
-        id: 'cuidados-pele',
-        title: 'Cuidados para Pele',
-        subtitle: 'Hidratantes • Limpeza • Proteção',
-        image: require('../../src/assets/images/categories/tintura.png'),
-        color: '#F0FDF4',
-    },
-    {
-        id: 'corpo-banho',
-        title: 'Corpo e Banho',
-        subtitle: 'Sabonetes • Hidratantes • Óleos',
-        image: require('../../src/assets/images/categories/tratamento.png'),
-        color: '#FEF3C7',
-    },
-    {
-        id: 'saude',
-        title: 'Bem-Estar e Saúde',
-        subtitle: 'Vitaminas • Suplementos • Cuidados',
-        image: require('../../src/assets/images/categories/perfumaria.png'),
-        color: '#FCE7F3',
-    },
-    {
-        id: 'presentes',
-        title: 'Presentes',
-        subtitle: 'Kits • Conjuntos • Embalagens',
-        image: require('../../src/assets/images/categories/transformacao.png'),
-        color: '#FEE2E2',
-    },
+    { id: 'cabelos', title: 'Cabelos', subtitle: 'Shampoos • Condicionadores • Máscaras', image: categoryTratamento, color: '#F9FAFB' },
+    { id: 'perfumes', title: 'Perfumes e Perfumaria', subtitle: 'Perfumes • Desodorantes • Águas', image: categoryPerfumaria, color: '#EBE5F9' },
+    { id: 'maquiagem', title: 'Maquiagem', subtitle: 'Base • Batom • Sombras', image: categoryTransformacao, color: '#EBF5FF' },
+    { id: 'cuidados-pele', title: 'Cuidados para Pele', subtitle: 'Hidratantes • Limpeza • Proteção', image: categoryTintura, color: '#F0FDF4' },
+    { id: 'corpo-banho', title: 'Corpo e Banho', subtitle: 'Sabonetes • Hidratantes • Óleos', image: categoryTratamento, color: '#FEF3C7' },
+    { id: 'presentes', title: 'Presentes', subtitle: 'Kits • Conjuntos • Embalagens', image: categoryTransformacao, color: '#FEE2E2' },
 ];
 
-export default function CategoriasScreen() {
-    const router = useRouter();
+interface CategoriesScreenProps {
+    onBack: () => void;
+    onCategoryPress: (categoryId: string) => void;
+}
 
+export function CategoriesScreen({ onBack, onCategoryPress }: CategoriesScreenProps) {
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             {/* Header */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                <TouchableOpacity onPress={onBack} style={styles.backButton}>
                     <ChevronLeft size={24} color="#111827" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Categorias</Text>
@@ -74,7 +38,7 @@ export default function CategoriasScreen() {
                     <TouchableOpacity
                         key={category.id}
                         style={[styles.categoryCard, { backgroundColor: category.color }]}
-                        onPress={() => router.push(`/category/${category.id}`)}
+                        onPress={() => onCategoryPress(category.id)}
                     >
                         <View style={styles.categoryInfo}>
                             <Text style={styles.categoryTitle}>{category.title}</Text>
@@ -85,7 +49,7 @@ export default function CategoriasScreen() {
                 ))}
                 <View style={styles.bottomSpacer} />
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -144,9 +108,9 @@ const styles = StyleSheet.create({
     },
     categoryImage: {
         width: 120,
-        height: '100%',
+        height: 100,
     },
     bottomSpacer: {
-        height: 80,
+        height: 100,
     },
 });
