@@ -7,15 +7,26 @@ import { HomeScreen } from './src/screens/HomeScreen';
 import { CategoriesScreen } from './src/screens/CategoriesScreen';
 import { BrandsScreen } from './src/screens/BrandsScreen';
 import { SearchScreen } from './src/screens/SearchScreen';
+import { ProductListScreen } from './src/screens/ProductListScreen';
+import { ProductDetailScreen } from './src/screens/ProductDetailScreen';
 import { BottomNavigation } from './src/components/BottomNavigation';
+import { DrawerMenu } from './src/components/DrawerMenu';
 
 type TabName = 'inicio' | 'categorias' | 'buscar' | 'marcas' | 'mais';
 type ScreenName = 'home' | 'categories' | 'brands' | 'search' | 'productList' | 'productDetail';
 
+interface ScreenParams {
+  type?: string;
+  slug?: string;
+  name?: string;
+  productId?: string;
+}
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabName>('inicio');
   const [currentScreen, setCurrentScreen] = useState<ScreenName>('home');
-  const [screenParams, setScreenParams] = useState<any>(null);
+  const [screenParams, setScreenParams] = useState<ScreenParams>({});
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   let [fontsLoaded] = useFonts({
     Inter_400Regular,
@@ -36,6 +47,7 @@ export default function App() {
     switch (tab) {
       case 'inicio':
         setCurrentScreen('home');
+        setScreenParams({});
         break;
       case 'categorias':
         setCurrentScreen('categories');
@@ -47,7 +59,7 @@ export default function App() {
         setCurrentScreen('brands');
         break;
       case 'mais':
-        // TODO: Open drawer menu
+        setIsDrawerOpen(true);
         break;
     }
   };
@@ -55,30 +67,68 @@ export default function App() {
   const navigateToHome = () => {
     setCurrentScreen('home');
     setActiveTab('inicio');
+    setScreenParams({});
   };
 
-  const handleCategoryPress = (categoryId: string) => {
-    setScreenParams({ categoryId });
-    // TODO: Navigate to product list
-    console.log('Category pressed:', categoryId);
+  const handleCategoryPress = (categoryId: string, categoryName?: string) => {
+    setScreenParams({
+      type: 'categoria',
+      slug: categoryId,
+      name: categoryName || categoryId
+    });
+    setCurrentScreen('productList');
   };
 
-  const handleBrandPress = (brandId: string) => {
-    setScreenParams({ brandId });
-    // TODO: Navigate to product list
-    console.log('Brand pressed:', brandId);
+  const handleBrandPress = (brandId: string, brandName?: string) => {
+    setScreenParams({
+      type: 'marca',
+      slug: brandId,
+      name: brandName || brandId
+    });
+    setCurrentScreen('productList');
   };
 
   const handleProductPress = (productId: string) => {
-    setScreenParams({ productId });
-    // TODO: Navigate to product detail
-    console.log('Product pressed:', productId);
+    // Preserve existing params (type, slug, name) so we can navigate back to list
+    setScreenParams(prev => ({ ...prev, productId }));
+    setCurrentScreen('productDetail');
+  };
+
+  const handleDrawerNavigate = (screen: string, params?: any) => {
+    if (screen === 'productList') {
+      setScreenParams(params);
+      setCurrentScreen('productList');
+    } else if (screen === 'cronograma') {
+      // TODO: Implement cronograma screen
+      console.log('Navigate to cronograma');
+    }
+  };
+
+  const handleBackFromList = () => {
+    setCurrentScreen('home');
+    setActiveTab('inicio');
+    setScreenParams({});
+  };
+
+  const handleBackFromDetail = () => {
+    // If came from product list, go back to list
+    if (screenParams.type) {
+      setCurrentScreen('productList');
+    } else {
+      setCurrentScreen('home');
+      setActiveTab('inicio');
+    }
   };
 
   const renderScreen = () => {
     switch (currentScreen) {
       case 'home':
-        return <HomeScreen onProductPress={handleProductPress} />;
+        return (
+          <HomeScreen
+            onProductPress={handleProductPress}
+            onCategoryPress={handleCategoryPress}
+          />
+        );
       case 'categories':
         return (
           <CategoriesScreen
@@ -100,10 +150,28 @@ export default function App() {
             onProductPress={handleProductPress}
           />
         );
+      case 'productList':
+        return (
+          <ProductListScreen
+            params={screenParams}
+            onBack={handleBackFromList}
+            onProductPress={handleProductPress}
+          />
+        );
+      case 'productDetail':
+        return (
+          <ProductDetailScreen
+            productId={screenParams.productId}
+            onBack={handleBackFromDetail}
+          />
+        );
       default:
         return <HomeScreen onProductPress={handleProductPress} />;
     }
   };
+
+  // Determine if we should show the bottom navigation
+  const showBottomNav = currentScreen !== 'productDetail';
 
   return (
     <SafeAreaProvider>
@@ -116,7 +184,16 @@ export default function App() {
         </View>
 
         {/* Bottom Navigation */}
-        <BottomNavigation activeTab={activeTab} onTabPress={handleTabPress} />
+        {showBottomNav && (
+          <BottomNavigation activeTab={activeTab} onTabPress={handleTabPress} />
+        )}
+
+        {/* Drawer Menu */}
+        <DrawerMenu
+          visible={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          onNavigate={handleDrawerNavigate}
+        />
       </SafeAreaView>
     </SafeAreaProvider>
   );

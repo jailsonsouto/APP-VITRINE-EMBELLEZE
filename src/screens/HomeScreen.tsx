@@ -31,9 +31,10 @@ const faqQuestions = [
 
 interface HomeScreenProps {
     onProductPress?: (productId: string) => void;
+    onCategoryPress?: (categoryId: string, categoryName: string) => void;
 }
 
-export function HomeScreen({ onProductPress }: HomeScreenProps) {
+export function HomeScreen({ onProductPress, onCategoryPress }: HomeScreenProps) {
     return (
         <View style={styles.container}>
             <Header />
@@ -53,13 +54,29 @@ export function HomeScreen({ onProductPress }: HomeScreenProps) {
                     <Text style={styles.sectionTitle}>Categorias</Text>
 
                     <View style={styles.categoryRow}>
-                        <CategoryCard title="Tratamento" imageSource={categoryTratamento} />
-                        <CategoryCard title="Tintura" imageSource={categoryTintura} />
+                        <CategoryCard
+                            title="Tratamento"
+                            imageSource={categoryTratamento}
+                            onPress={() => onCategoryPress?.('tratamento', 'Tratamento')}
+                        />
+                        <CategoryCard
+                            title="Tintura"
+                            imageSource={categoryTintura}
+                            onPress={() => onCategoryPress?.('coloracao', 'Coloração')}
+                        />
                     </View>
 
                     <View style={styles.categoryRow}>
-                        <CategoryCard title="Transformação" imageSource={categoryTransformacao} />
-                        <CategoryCard title="Perfumaria" imageSource={categoryPerfumaria} />
+                        <CategoryCard
+                            title="Transformação"
+                            imageSource={categoryTransformacao}
+                            onPress={() => onCategoryPress?.('transformacao', 'Transformação')}
+                        />
+                        <CategoryCard
+                            title="Perfumaria"
+                            imageSource={categoryPerfumaria}
+                            onPress={() => onCategoryPress?.('perfumaria', 'Perfumaria')}
+                        />
                     </View>
                 </View>
 
