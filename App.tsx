@@ -10,11 +10,12 @@ import { SearchScreen } from './src/screens/SearchScreen';
 import { ProductListScreen } from './src/screens/ProductListScreen';
 import { ProductDetailScreen } from './src/screens/ProductDetailScreen';
 import { CronogramaCapilarScreen } from './src/screens/CronogramaCapilarScreen';
+import { EducationScreen } from './src/screens/EducationScreen';
 import { BottomNavigation } from './src/components/BottomNavigation';
 import { DrawerMenu } from './src/components/DrawerMenu';
 
 type TabName = 'inicio' | 'categorias' | 'buscar' | 'marcas' | 'mais';
-type ScreenName = 'home' | 'categories' | 'brands' | 'search' | 'productList' | 'productDetail' | 'cronograma';
+type ScreenName = 'home' | 'categories' | 'brands' | 'search' | 'productList' | 'productDetail' | 'cronograma' | 'education';
 
 interface ScreenParams {
   type?: string;
@@ -101,6 +102,8 @@ export default function App() {
       setCurrentScreen('productList');
     } else if (screen === 'cronograma') {
       setCurrentScreen('cronograma');
+    } else if (screen === 'education') {
+      setCurrentScreen('education');
     }
   };
 
@@ -169,6 +172,13 @@ export default function App() {
         return (
           <CronogramaCapilarScreen
             onBack={navigateToHome}
+          />
+        );
+      case 'education':
+        return (
+          <EducationScreen
+            onBack={navigateToHome}
+            onArticlePress={(id) => console.log('Article pressed:', id)}
           />
         );
       default:

@@ -76,27 +76,43 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ visible, onClose, onNavi
         onClose();
     };
 
-    const necessidades = [
-        { name: 'Hidratação', slug: 'hidratacao' },
-        { name: 'Nutrição', slug: 'nutricao' },
-        { name: 'Reconstrução', slug: 'reconstrucao' },
-        { name: 'Antifrizz', slug: 'antifrizz' },
-        { name: 'Queda', slug: 'queda' },
-        { name: 'Crescimento', slug: 'crescimento' },
-        { name: 'Caspa', slug: 'caspa' },
-        { name: 'Cachos', slug: 'cachos' },
-        { name: 'Lisos', slug: 'lisos' }
+    const tratamento = [
+        { name: 'Máscara Capilar', slug: 'mascara-capilar' },
+        { name: 'Creme de Tratamento', slug: 'creme-de-tratamento' },
+        { name: 'Óleos e Reparadores', slug: 'oleos-reparadores' },
+        { name: 'Tônicos', slug: 'tonicos' },
+        { name: 'Recargas', slug: 'recargas' }
     ];
 
-    const categorias = [
-        { name: 'Shampoo', slug: 'shampoo' },
-        { name: 'Condicionador', slug: 'condicionador' },
-        { name: 'Creme de Tratamento', slug: 'creme-de-tratamento' },
-        { name: 'Máscara Capilar', slug: 'mascara-capilar' },
-        { name: 'Recargas', slug: 'recargas' },
-        { name: 'Finalizadores', slug: 'finalizadores' },
-        { name: 'Kit', slug: 'kit' },
-        { name: 'Tônicos', slug: 'tonicos' }
+    const coloracao = [
+        { name: 'Preto', slug: 'preto' },
+        { name: 'Castanho', slug: 'castanho' },
+        { name: 'Loiro', slug: 'loiro' },
+        { name: 'Vermelho', slug: 'vermelho' },
+        { name: 'Marsala', slug: 'marsala' },
+        { name: 'Chocolate', slug: 'chocolate' },
+        { name: 'Cores Fantasia', slug: 'fantasia' }
+    ];
+
+    const transformacao = [
+        { name: 'Henê', slug: 'hene' },
+        { name: 'Guanidina', slug: 'guanidina' },
+        { name: 'Tioglicolato', slug: 'tioglicolato' },
+        { name: 'Progressiva', slug: 'progressiva' }
+    ];
+
+    const profissional = [
+        { name: 'Nutrisalon', slug: 'nutrisalon' },
+        { name: 'Salon Blindagem', slug: 'salon-blindagem' },
+        { name: 'Yantra', slug: 'yantra' },
+        { name: 'Alkimia', slug: 'alkimia' },
+        { name: 'Misuke', slug: 'misuke' },
+        { name: 'Bllex', slug: 'bllex' }
+    ];
+
+    const linhaKids = [
+        { name: 'Cacheados (Meus Cachinhos)', slug: 'meus-cachinhos' },
+        { name: 'Lisos (Liso Lisinho)', slug: 'liso-lisinho' }
     ];
 
     const marcas = [
@@ -115,24 +131,35 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ visible, onClose, onNavi
         { name: 'Toin', slug: 'toin' },
         { name: 'Nutrisalon', slug: 'nutrisalon' },
         { name: 'Yantra', slug: 'yantra' },
-        { name: 'Alkimia', slug: 'alkimia' }
+        { name: 'Alkimia', slug: 'alkimia' },
+        { name: 'Misuke', slug: 'misuke' },
+        { name: 'Urban Style', slug: 'urban-style' },
+        { name: 'DNA Do Cacho', slug: 'dna-do-cacho' }
     ];
 
-    const coloracao = [
-        { name: 'Preto', slug: 'preto' },
-        { name: 'Castanho', slug: 'castanho' },
-        { name: 'Loiro', slug: 'loiro' },
-        { name: 'Vermelho', slug: 'vermelho' },
-        { name: 'Marsala', slug: 'marsala' },
-        { name: 'Chocolate', slug: 'chocolate' },
-        { name: 'Cores Fantasia', slug: 'fantasia' }
+    const categorias = [
+        { name: 'Shampoo', slug: 'shampoo' },
+        { name: 'Condicionador', slug: 'condicionador' },
+        { name: 'Finalizadores', slug: 'finalizadores' },
+        { name: 'Kit', slug: 'kit' }
     ];
 
-    const transformacao = [
-        { name: 'Henê', slug: 'hene' },
-        { name: 'Guanidina', slug: 'guanidina' },
-        { name: 'Tioglicolato', slug: 'tioglicolato' },
-        { name: 'Progressiva', slug: 'progressiva' }
+    const necessidades = [
+        { name: 'Hidratação', slug: 'hidratacao' },
+        { name: 'Nutrição', slug: 'nutricao' },
+        { name: 'Reconstrução', slug: 'reconstrucao' },
+        { name: 'Antifrizz', slug: 'antifrizz' },
+        { name: 'Queda', slug: 'queda' },
+        { name: 'Crescimento', slug: 'crescimento' },
+        { name: 'Caspa', slug: 'caspa' },
+        { name: 'Cachos', slug: 'cachos' },
+        { name: 'Lisos', slug: 'lisos' }
+    ];
+
+    const educacao = [
+        { name: 'Guia para Iniciantes', slug: 'guia-iniciantes' },
+        { name: 'Dicas de Produtos', slug: 'dicas-produtos' },
+        { name: 'Vídeos de Treinamento', slug: 'videos-treinamento' }
     ];
 
     return (
@@ -154,7 +181,7 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ visible, onClose, onNavi
                     </View>
 
                     <ScrollView style={styles.drawerContent} showsVerticalScrollIndicator={false}>
-                        {/* Quick Links */}
+                        {/* 1. Mais Vendidos */}
                         <TouchableOpacity
                             style={styles.quickLink}
                             onPress={() => { onNavigate('productList', { type: 'special', slug: 'mais-vendidos', name: 'Mais Vendidos' }); onClose(); }}
@@ -163,49 +190,7 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ visible, onClose, onNavi
                             <Text style={styles.quickLinkText}>Mais Vendidos</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={styles.quickLink}
-                            onPress={() => { onNavigate('cronograma'); onClose(); }}
-                        >
-                            <Calendar size={20} color="#7C3AED" />
-                            <Text style={styles.quickLinkText}>Cronograma Capilar</Text>
-                        </TouchableOpacity>
-
-                        <View style={styles.divider} />
-
-                        {/* Necessidades do Cabelo */}
-                        <AccordionSection
-                            title="Necessidades do Cabelo"
-                            icon={<Droplets size={20} color="#7C3AED" />}
-                            items={necessidades}
-                            expanded={expandedSection === 'necessidades'}
-                            onToggle={() => toggleSection('necessidades')}
-                            onItemPress={(slug, name) => handleItemPress('necessidade', slug, name)}
-                        />
-
-                        {/* Categorias de Produtos */}
-                        <AccordionSection
-                            title="Categorias de Produtos"
-                            icon={<Grid3X3 size={20} color="#7C3AED" />}
-                            items={categorias}
-                            expanded={expandedSection === 'categorias'}
-                            onToggle={() => toggleSection('categorias')}
-                            onItemPress={(slug, name) => handleItemPress('categoria', slug, name)}
-                        />
-
-                        {/* Marcas */}
-                        <AccordionSection
-                            title="Marcas"
-                            icon={<Tag size={20} color="#7C3AED" />}
-                            items={marcas}
-                            expanded={expandedSection === 'marcas'}
-                            onToggle={() => toggleSection('marcas')}
-                            onItemPress={(slug, name) => handleItemPress('marca', slug, name)}
-                        />
-
-                        <View style={styles.divider} />
-
-                        {/* Other Links */}
+                        {/* 2. Novidades */}
                         <TouchableOpacity
                             style={styles.quickLink}
                             onPress={() => { onNavigate('productList', { type: 'special', slug: 'novidades', name: 'Novidades' }); onClose(); }}
@@ -214,7 +199,19 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ visible, onClose, onNavi
                             <Text style={styles.quickLinkText}>Novidades</Text>
                         </TouchableOpacity>
 
-                        {/* Coloração */}
+                        <View style={styles.divider} />
+
+                        {/* 3. Tratamento */}
+                        <AccordionSection
+                            title="Tratamento"
+                            icon={<Droplets size={20} color="#7C3AED" />}
+                            items={tratamento}
+                            expanded={expandedSection === 'tratamento'}
+                            onToggle={() => toggleSection('tratamento')}
+                            onItemPress={(slug, name) => handleItemPress('categoria', slug, name)}
+                        />
+
+                        {/* 4. Coloração */}
                         <AccordionSection
                             title="Coloração"
                             icon={<Palette size={20} color="#7C3AED" />}
@@ -224,7 +221,7 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ visible, onClose, onNavi
                             onItemPress={(slug, name) => handleItemPress('categoria', slug, name)}
                         />
 
-                        {/* Transformação */}
+                        {/* 5. Transformação */}
                         <AccordionSection
                             title="Transformação"
                             icon={<Wand2 size={20} color="#7C3AED" />}
@@ -234,20 +231,74 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ visible, onClose, onNavi
                             onItemPress={(slug, name) => handleItemPress('categoria', slug, name)}
                         />
 
+                        {/* 6. Profissional */}
+                        <AccordionSection
+                            title="Profissional"
+                            icon={<Briefcase size={20} color="#7C3AED" />}
+                            items={profissional}
+                            expanded={expandedSection === 'profissional'}
+                            onToggle={() => toggleSection('profissional')}
+                            onItemPress={(slug, name) => handleItemPress('marca', slug, name)} // Linking to brand/line
+                        />
+
+                        {/* 7. Linha Kids */}
+                        <AccordionSection
+                            title="Linha Kids"
+                            icon={<Baby size={20} color="#7C3AED" />}
+                            items={linhaKids}
+                            expanded={expandedSection === 'linhaKids'}
+                            onToggle={() => toggleSection('linhaKids')}
+                            onItemPress={(slug, name) => handleItemPress('categoria', slug, name)}
+                        />
+
+                        {/* 8. Marcas */}
+                        <AccordionSection
+                            title="Marcas"
+                            icon={<Tag size={20} color="#7C3AED" />}
+                            items={marcas}
+                            expanded={expandedSection === 'marcas'}
+                            onToggle={() => toggleSection('marcas')}
+                            onItemPress={(slug, name) => handleItemPress('marca', slug, name)}
+                        />
+
+                        {/* 9. Categorias de Produtos */}
+                        <AccordionSection
+                            title="Categorias de Produtos"
+                            icon={<Grid3X3 size={20} color="#7C3AED" />}
+                            items={categorias}
+                            expanded={expandedSection === 'categorias'}
+                            onToggle={() => toggleSection('categorias')}
+                            onItemPress={(slug, name) => handleItemPress('categoria', slug, name)}
+                        />
+
+                        {/* 10. Necessidades do Cabelo */}
+                        <AccordionSection
+                            title="Necessidades do Cabelo"
+                            icon={<Droplets size={20} color="#7C3AED" />}
+                            items={necessidades}
+                            expanded={expandedSection === 'necessidades'}
+                            onToggle={() => toggleSection('necessidades')}
+                            onItemPress={(slug, name) => handleItemPress('necessidade', slug, name)}
+                        />
+
+                        <View style={styles.divider} />
+
+                        {/* 11. Cronograma Capilar */}
                         <TouchableOpacity
                             style={styles.quickLink}
-                            onPress={() => { onNavigate('productList', { type: 'special', slug: 'linha-kids', name: 'Linha Kids' }); onClose(); }}
+                            onPress={() => { onNavigate('cronograma'); onClose(); }}
                         >
-                            <Baby size={20} color="#7C3AED" />
-                            <Text style={styles.quickLinkText}>Linha Kids</Text>
+                            <Calendar size={20} color="#7C3AED" />
+                            <Text style={styles.quickLinkText}>Cronograma Capilar</Text>
                         </TouchableOpacity>
 
+                        {/* 12. Educação */}
                         <TouchableOpacity
                             style={styles.quickLink}
-                            onPress={() => { onNavigate('productList', { type: 'special', slug: 'profissional', name: 'Profissional' }); onClose(); }}
+                            onPress={() => { onNavigate('education'); onClose(); }}
                         >
                             <Briefcase size={20} color="#7C3AED" />
-                            <Text style={styles.quickLinkText}>Profissional</Text>
+                            <Text style={styles.quickLinkText}>Educação (Wiki)</Text>
                         </TouchableOpacity>
 
                         <View style={{ height: 40 }} />
