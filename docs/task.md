@@ -61,3 +61,7 @@
 - [ ] Refactor Drawer Menu with Visual Icons (Gota, Pote, etc.)
 - [ ] Add "Quiz/Cronograma" floating entry point on Home
 - [ ] Implement Micro-interactions (Add to Cart bounce, Skeleton loading)
+
+## Project Maintenance (Recurring)
+- [ ] Sync all MD artifacts to `docs/` folder (Local + Git) 🔄
+- [ ] Update `CHAT_HISTORY` if applicable
