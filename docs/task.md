@@ -47,9 +47,12 @@
 - [x] Error states ✅
 - [x] Implement Cronograma Capilar Screen ✅
 - [x] Fix TypeScript errors (ScreenParams) ✅
-- [ ] Test on Android device
-- [ ] Create branch `feature/navigation-complete`
-- [ ] Push to GitHub
+- [x] Test on Android device
+- [x] Create branch `feature/navigation-complete` ✅
+- [x] Push to GitHub ✅
+- [x] Reorder Navigation Menu ✅
+- [x] Add new brands (Misuke, Urban Style, DNA Do Cacho) ✅
+- [x] Implement Education (Wiki) Section ✅
 
 ## Phase 9: UX/UI Refinement & Full Navigation (New PRD)
 - [ ] Implement "Necessidades" Section in Drawer (Level 1)
