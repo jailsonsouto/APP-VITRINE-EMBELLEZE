@@ -176,7 +176,9 @@ export const api = {
 
     getProductsByBrand: async (brandSlug: string): Promise<Product[]> => {
         await delay(500);
-        return products.filter(p => p.brand.toLowerCase().replace(' ', '-') === brandSlug.toLowerCase())
-            .length > 0 ? products.filter(p => p.brand.toLowerCase().replace(' ', '-') === brandSlug.toLowerCase()) : products;
+        const normalize = (str: string) => str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
+
+        const filtered = products.filter(p => normalize(p.brand) === brandSlug);
+        return filtered.length > 0 ? filtered : products;
     }
 };

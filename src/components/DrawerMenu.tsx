@@ -81,19 +81,22 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ visible, onClose, onNavi
         { name: 'Nutrição', slug: 'nutricao' },
         { name: 'Reconstrução', slug: 'reconstrucao' },
         { name: 'Antifrizz', slug: 'antifrizz' },
-        { name: 'Queda', slug: 'queda' }
+        { name: 'Queda', slug: 'queda' },
+        { name: 'Crescimento', slug: 'crescimento' },
+        { name: 'Caspa', slug: 'caspa' },
+        { name: 'Cachos', slug: 'cachos' },
+        { name: 'Lisos', slug: 'lisos' }
     ];
 
     const categorias = [
-        { name: 'Tratamento', slug: 'tratamento' },
         { name: 'Shampoo', slug: 'shampoo' },
         { name: 'Condicionador', slug: 'condicionador' },
-        { name: 'Recargas', slug: 'recargas' },
+        { name: 'Creme de Tratamento', slug: 'creme-de-tratamento' },
         { name: 'Máscara Capilar', slug: 'mascara-capilar' },
+        { name: 'Recargas', slug: 'recargas' },
         { name: 'Finalizadores', slug: 'finalizadores' },
         { name: 'Kit', slug: 'kit' },
-        { name: 'Coloração', slug: 'coloracao' },
-        { name: 'Transformação', slug: 'transformacao' }
+        { name: 'Tônicos', slug: 'tonicos' }
     ];
 
     const marcas = [
@@ -113,6 +116,23 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ visible, onClose, onNavi
         { name: 'Nutrisalon', slug: 'nutrisalon' },
         { name: 'Yantra', slug: 'yantra' },
         { name: 'Alkimia', slug: 'alkimia' }
+    ];
+
+    const coloracao = [
+        { name: 'Preto', slug: 'preto' },
+        { name: 'Castanho', slug: 'castanho' },
+        { name: 'Loiro', slug: 'loiro' },
+        { name: 'Vermelho', slug: 'vermelho' },
+        { name: 'Marsala', slug: 'marsala' },
+        { name: 'Chocolate', slug: 'chocolate' },
+        { name: 'Cores Fantasia', slug: 'fantasia' }
+    ];
+
+    const transformacao = [
+        { name: 'Henê', slug: 'hene' },
+        { name: 'Guanidina', slug: 'guanidina' },
+        { name: 'Tioglicolato', slug: 'tioglicolato' },
+        { name: 'Progressiva', slug: 'progressiva' }
     ];
 
     return (
@@ -194,21 +214,25 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ visible, onClose, onNavi
                             <Text style={styles.quickLinkText}>Novidades</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={styles.quickLink}
-                            onPress={() => { onNavigate('productList', { type: 'categoria', slug: 'coloracao', name: 'Coloração' }); onClose(); }}
-                        >
-                            <Palette size={20} color="#7C3AED" />
-                            <Text style={styles.quickLinkText}>Coloração</Text>
-                        </TouchableOpacity>
+                        {/* Coloração */}
+                        <AccordionSection
+                            title="Coloração"
+                            icon={<Palette size={20} color="#7C3AED" />}
+                            items={coloracao}
+                            expanded={expandedSection === 'coloracao'}
+                            onToggle={() => toggleSection('coloracao')}
+                            onItemPress={(slug, name) => handleItemPress('categoria', slug, name)}
+                        />
 
-                        <TouchableOpacity
-                            style={styles.quickLink}
-                            onPress={() => { onNavigate('productList', { type: 'categoria', slug: 'transformacao', name: 'Transformação' }); onClose(); }}
-                        >
-                            <Wand2 size={20} color="#7C3AED" />
-                            <Text style={styles.quickLinkText}>Transformação</Text>
-                        </TouchableOpacity>
+                        {/* Transformação */}
+                        <AccordionSection
+                            title="Transformação"
+                            icon={<Wand2 size={20} color="#7C3AED" />}
+                            items={transformacao}
+                            expanded={expandedSection === 'transformacao'}
+                            onToggle={() => toggleSection('transformacao')}
+                            onItemPress={(slug, name) => handleItemPress('categoria', slug, name)}
+                        />
 
                         <TouchableOpacity
                             style={styles.quickLink}
