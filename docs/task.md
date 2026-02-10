@@ -50,3 +50,11 @@
 - [ ] Test on Android device
 - [ ] Create branch `feature/navigation-complete`
 - [ ] Push to GitHub
+
+## Phase 9: UX/UI Refinement & Full Navigation (New PRD)
+- [ ] Implement "Necessidades" Section in Drawer (Level 1)
+- [ ] Implement "Transformação & Cor" Section in Drawer (Level 1)
+- [ ] Create "Visual Filters" (Chips) component for ProductList
+- [ ] Refactor Drawer Menu with Visual Icons (Gota, Pote, etc.)
+- [ ] Add "Quiz/Cronograma" floating entry point on Home
+- [ ] Implement Micro-interactions (Add to Cart bounce, Skeleton loading)
